@@ -18,33 +18,34 @@ using namespace std;
 
 Simulation::Simulation()
 {
-  peopleHelped = 0;
-  ticks = 0;
+  numberPeople = 0;
+  timer = 0;
+
   meanWait = 0;
   medianWait = 0;
   longestWait = 0;
-  averageIdle = 0;
+  meanIdle = 0;
   longestIdle = 0;
-  waitedOverTen = 0;
-  idleOverFive = 0;
+  overTen = 0;
+  overFive = 0;
 }
 
 //from the file, takes how many people have arrived
 Simulation::Simulation(string file)
 {
-  ticks = 0;
-  peopleHelped = 0;
-  arrivalTick = 0;
-  totalPeople = 0;
+  arrv = 0;
   counter = 0;
+  fileName = file;
+  longestWait = 0;
+  longestIdle = 0;
   meanWait = 0;
   medianWait = 0;
-  longestWait = 0;
-  averageIdle = 0;
-  longestIdle = 0;
-  waitedOverTen = 0;
-  idleOverFive = 0;
-  fileName = file;
+  meanIdle = 0;
+  numberPeople = 0;
+  timer = 0;
+  totalPeople = 0;
+  overTen = 0;
+  overFive = 0;
   calculate();
 }
 
@@ -99,14 +100,14 @@ void Simulation::calculate()
   while(!people.eof())
   {
     people >> currentLine;
-    arrivalTick = stoi(currentLine);
+    arrv = stoi(currentLine);
     people >> currentLine;
     int peopleArriving = stoi(currentLine);
 
     for(int i = 0; i < peopleArriving; i++)
     {
       people >> currentLine;
-      Student p(stoi(currentLine), arrivalTick);
+      Student p(stoi(currentLine), arrv);
       totalPeople++;
       entered.enqueue(p);
     }
@@ -126,13 +127,13 @@ void Simulation::clearWindows()
         Student temp = personAtWindow[i];
         if(temp.timeWaited == 0)
         {
-          waitTimes[peopleHelped] = 0;
+          waitTimes[numberPeople] = 0;
         }
         else
         {
-          waitTimes[peopleHelped] =  temp.timeWaited - 1;
+          waitTimes[numberPeople] =  temp.timeWaited - 1;
         }
-        peopleHelped++; //increments the number of people helped
+        numberPeople++; //increments the number of people helped
       }
     }
   }
@@ -141,7 +142,7 @@ void Simulation::clearWindows()
 void Simulation::addToLine()
 {
   Student p = entered.vFront();
-  while(p.arrivalTime == ticks)
+  while(p.arrivalTime == timer)
   {
     regLine.enqueue(p);
     entered.dequeue();
@@ -198,11 +199,11 @@ void Simulation::moveLine()
         }
       }
 
-      if(ticks == 5)
+      if(timer == 5)
       {
         Student test = regLine.vFront();
       }
-      ticks++;
+      timer++;
     }
     for(int i = 0; i < totalPeople; i++)
     {
@@ -213,23 +214,23 @@ void Simulation::moveLine()
       }
       if(waitTimes[i] > 10)
       {
-        waitedOverTen++;
+        overTen++;
       }
     }
 
     for(int j = 0; j < windowCount; j++)
     {
-      averageIdle += idleTimes[j];
+      meanIdle += idleTimes[j];
       if(longestIdle < idleTimes[j])
       {
         longestIdle = idleTimes[j];
       }
       if(idleTimes[j] > 5)
       {
-        idleOverFive++;
+        overFive++;
       }
     }
     meanWait = meanWait/totalPeople;
     medianWait = findMedian();
-    averageIdle = averageIdle/windowCount;
+    meanIdle = meanIdle/windowCount;
 }

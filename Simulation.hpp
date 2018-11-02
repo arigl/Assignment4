@@ -21,19 +21,21 @@ class Simulation
     Simulation();
     Simulation(string fileName);//populate in here
 
-    int peopleHelped;
+    int numberPeople;
     int totalPeople;
     int windowCount;
-    int ticks;
-    int arrivalTick;
+    int timer;
+    int arrv;
     int counter;
-    double meanWait;
     int medianWait;
     int longestWait;
-    double averageIdle;
+    int overTen;
+    int overFive;
+
+    double meanWait;
+    double meanIdle;
     double longestIdle;
-    int waitedOverTen;
-    int idleOverFive;
+
 
     string fileName;
     string currentLine;

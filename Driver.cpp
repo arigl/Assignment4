@@ -18,16 +18,17 @@
 int main(int argc, char** argv){
   string fileName;
 
+  // CANT ADD ARGUMENTS IN HERE, KEEP GETTING STOI ERROR :(
   fileName = argv[1];
 
   Simulation s(fileName);
   s.moveLine();
 
   cout << "The mean student wait time is: " << s.meanWait << endl;
-  cout << "The median student wait time is: " << s.medianWait << " minutes!" << endl;
-  cout << "The longest student wait time is: " << s.longestWait << " minutes!" << endl;
-  cout << "The number of students waiting over 10 minutes is: "<< s.waitedOverTen << endl;
-  cout << "The mean window idle time is:  " << s.averageIdle << endl;
+  cout << "The median student wait time is: " << s.medianWait << endl;
+  cout << "The longest student wait time is: " << s.longestWait << endl;
+  cout << "The number of students waiting over 10 minutes is: "<< s.overTen << endl;
+  cout << "The mean window idle time is:  " << s.meanIdle << endl;
   cout << "The longest window idle time is: " << s.longestIdle << endl;
-  cout << "Number of windows idle for over 5 minutes: "<< s.idleOverFive << endl;
+  cout << "Number of windows idle for over 5 minutes: "<< s.overFive << endl;
 }

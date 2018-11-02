@@ -118,25 +118,19 @@ T GenQueue<T>::vBack()
 template <class T>
 void GenQueue<T>::printQ()
 {
-  if(isEmpty() == false)
-  {
-    ListNode<T> *curr = front;
+  ListNode<T> *curr = front;
+
     while(true)
     {
-      if(curr != NULL)
-      {
-        curr->data.printPerson();
-        curr = curr->next;
-      }
-      else
-      {
-        break;
-      }
-    }
-    }
-    else
-    {
-      cout << "Queue is empty!" << endl;
+        if(curr != NULL)
+        {
+            cout << curr->data << endl;
+            curr = curr->next;
+        }
+        else
+        {
+            break;
+        }
     }
 }
 
