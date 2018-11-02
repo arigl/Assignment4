@@ -38,6 +38,7 @@ class GenQueue
     unsigned int getSize();
 };
 
+// CONSTRUCTOR 
 template <class T>
 GenQueue<T>::GenQueue() {
   numElements = 0;
@@ -48,9 +49,10 @@ GenQueue<T>::GenQueue() {
 template <class T>
 GenQueue<T>::~GenQueue()
 {
-
+// DESTRUCTOR 
 }
 
+// Adds an element to the Queue
 template <class T>
 void GenQueue<T>::enqueue(T d) {
   ListNode<T> *node = new ListNode<T>(d);
@@ -66,6 +68,7 @@ void GenQueue<T>::enqueue(T d) {
   ++numElements;
 }
 
+// Removes an element from the Queue
 template <class T>
 T GenQueue<T>::dequeue() {
 
@@ -95,6 +98,7 @@ T GenQueue<T>::dequeue() {
   }
 }
 
+// Peeks at the front of the Queue
 template <class T>
 T GenQueue<T>::vFront()
 {
@@ -105,6 +109,7 @@ T GenQueue<T>::vFront()
   return T();
 }
 
+// Peeks at the back of the Queue
 template <class T>
 T GenQueue<T>::vBack()
 {
@@ -134,12 +139,14 @@ void GenQueue<T>::printQ()
     }
 }
 
+//Returns whether or not there exsists any values in the Queue
 template <class T>
 bool GenQueue<T>::isEmpty()
 {
   return (numElements == 0);
 }
 
+//Returns the size of the Queue
 template <class T>
 unsigned int GenQueue<T>::getSize() {
   return numElements;
