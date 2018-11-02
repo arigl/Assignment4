@@ -22,7 +22,7 @@ int main(int argc, char** argv){
   fileName = argv[1];
 
   Simulation s(fileName);
-  s.moveLine();
+  s.move();
 
   cout << "The mean student wait time is: " << s.meanWait << endl;
   cout << "The median student wait time is: " << s.medianWait << endl;

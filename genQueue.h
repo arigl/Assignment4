@@ -135,7 +135,8 @@ void GenQueue<T>::printQ()
 }
 
 template <class T>
-bool GenQueue<T>::isEmpty() {
+bool GenQueue<T>::isEmpty()
+{
   return (numElements == 0);
 }
 

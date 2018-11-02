@@ -21,53 +21,47 @@ class Simulation
     Simulation();
     Simulation(string fileName);
 
-    int numberPeople;
-    int total;
-    int windowAmount;
-    int timer;
-    int arrv;
-    int counter;
-    int medianWait;
-    int longWait;
-    int tenPlus;
-    int fivePlus;
+    int numberPeople; // number of people currently there
+    int total; // total amount of people exsisted
+    int windowAmount; // amount of windows
+    int timer; //flow of time for customers
+    int arrv; // counter varible
+    int counter; // counter variable
+    int medianWait; //median of the waiting times
+    int longWait; //longest wait time
+    int tenPlus; //over ten ticks
+    int fivePlus; //over five ticks
 
-    double meanWait;
-    double meanIdle;
-    double longestIdle;
+    double meanWait; //average wait time
+    double meanIdle; //average idle time
+    double longestIdle; //longest idle time
 
-    string fileName;
-    string currentLine;
+    string fileName; // file name
+    string currentLine; // iterates through file
 
-    ifstream people;
+    ifstream inFile; //file stream
 
-    GenQueue<Student> begin;
-    GenQueue<Student> end;
+    GenQueue<Student> begin; //students intering queue
+    GenQueue<Student> end; // students exsisting queue
 
-    int *idleArray;
-    int *waitArray;
-    bool *windows;
-    Student *personAtWindow;
+    int *idleArray; // array of idle students
+    int *waitArray; //array of waiting students
+    bool *windows; //which windows are open
+    Student *personAtWindow; //the student at the window
 
     void calculate();
-    void addToLine();
-    void moveLine(); //This should be the main loop
+    void add();
+    void move();
     void clearWindows();
-    void updateIdleWindows();
-    void outputStats();
-    void updateWaitTime();
-    void printLine();//debugging purposes
+    int checkWindows();
 
     double longestWait();
     double overTen();
     double overFive();
     double longestIdleWait();
-    double findMedian();
+    double median();
 
     bool windowsAreEmpty();
 
     int windowsOpen();
-
-
-
 };

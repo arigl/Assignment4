@@ -48,31 +48,6 @@ Simulation::Simulation(string file)
   calculate();
 }
 
-int Simulation::checkWindows()
-{
-  for(int i = 0; i < windowAmount; i++)
-  {
-    if(windows[i] == false)
-    {
-      return i;
-    }
-  }
-  return -1;
-}
-
-double Simulation::findMedian()
-{
-  sort(waitArray, waitArray + total - 1);
-  if((total % 2) == 1)
-  {
-    return waitArray[(total/2)];
-  }
-  else
-  {
-    return ((waitArray[total/2]+waitArray[(total/2)-1]));
-  }
-}
-
 double Simulation::overTen()
 {
   for(int i = 0; i < total; i++)
@@ -117,7 +92,6 @@ double Simulation::longestWait()
   }
 }
 
-
 bool Simulation::windowsAreEmpty()
 {
   for(int i = 0; i < windowAmount; i++)
@@ -130,26 +104,52 @@ bool Simulation::windowsAreEmpty()
   return true;
 }
 
+int Simulation::checkWindows()
+{
+  for(int i = 0; i < windowAmount; i++)
+  {
+    if(windows[i] == false)
+    {
+      return i;
+    }
+  }
+  return -1;
+}
+
+double Simulation::median()
+{
+  sort(waitArray, waitArray + total - 1);
+  if((total % 2) == 1)
+  {
+    return waitArray[(total/2)];
+  }
+  else
+  {
+    return ((waitArray[total/2]+waitArray[(total/2)-1]));
+  }
+}
+
 void Simulation::calculate()
 {
-  people.open(fileName); //opens the file
-  people >> currentLine;
+  inFile.open(fileName); //opens the file
+  inFile >> currentLine;
   windowAmount = stoi(currentLine);
   personAtWindow = new Student[windowAmount];
   windows = new bool[windowAmount];
   idleArray = new int[windowAmount];
   int peopleArriving;
 
-  while(!people.eof())
+  while(!inFile.eof())
   {
-    people >> currentLine;
+    inFile >> currentLine;
     arrv = stoi(currentLine);
-    people >> currentLine;
-    int peopleArriving = stoi(currentLine);
+
+    inFile >> currentLine;
+    peopleArriving = stoi(currentLine);
 
     for(int i = 0; i < peopleArriving; i++)
     {
-      people >> currentLine;
+      inFile >> currentLine;
       Student p(stoi(currentLine), arrv);
       total++;
       begin.enqueue(p);
@@ -182,7 +182,7 @@ void Simulation::clearWindows()
   }
 }
 
-void Simulation::addToLine()
+void Simulation::add()
 {
   Student p = begin.vFront();
   while(p.arrivalTime == timer)
@@ -194,13 +194,13 @@ void Simulation::addToLine()
 }
 
 
-void Simulation::moveLine()
+void Simulation::move()
 {
     while(!begin.isEmpty()|| !end.isEmpty() || !windowsAreEmpty())
     {
       if(!begin.isEmpty())
       {
-        addToLine();
+        add();
       }
 
       clearWindows();
@@ -269,6 +269,6 @@ void Simulation::moveLine()
     }
 
     meanWait = meanWait/total;
-    medianWait = findMedian();
+    medianWait = median();
     meanIdle = meanIdle/windowAmount;
 }
