@@ -19,34 +19,33 @@ class Simulation
 {
   public:
     Simulation();
-    Simulation(string fileName);//populate in here
+    Simulation(string fileName);
 
     int numberPeople;
-    int totalPeople;
-    int windowCount;
+    int total;
+    int windowAmount;
     int timer;
     int arrv;
     int counter;
     int medianWait;
-    int longestWait;
-    int overTen;
-    int overFive;
+    int longWait;
+    int tenPlus;
+    int fivePlus;
 
     double meanWait;
     double meanIdle;
     double longestIdle;
-
 
     string fileName;
     string currentLine;
 
     ifstream people;
 
-    GenQueue<Student> entered;
-    GenQueue<Student> regLine;
+    GenQueue<Student> begin;
+    GenQueue<Student> end;
 
-    int *idleTimes;
-    int *waitTimes;
+    int *idleArray;
+    int *waitArray;
     bool *windows;
     Student *personAtWindow;
 
@@ -59,11 +58,16 @@ class Simulation
     void updateWaitTime();
     void printLine();//debugging purposes
 
+    double longestWait();
+    double overTen();
+    double overFive();
+    double longestIdleWait();
+    double findMedian();
+
     bool windowsAreEmpty();
 
     int windowsOpen();
 
-    double findMedian();
 
 
 };

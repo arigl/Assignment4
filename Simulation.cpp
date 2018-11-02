@@ -20,14 +20,13 @@ Simulation::Simulation()
 {
   numberPeople = 0;
   timer = 0;
-
   meanWait = 0;
   medianWait = 0;
-  longestWait = 0;
+  longWait = 0;
   meanIdle = 0;
   longestIdle = 0;
-  overTen = 0;
-  overFive = 0;
+  tenPlus = 0;
+  fivePlus = 0;
 }
 
 //from the file, takes how many people have arrived
@@ -36,23 +35,22 @@ Simulation::Simulation(string file)
   arrv = 0;
   counter = 0;
   fileName = file;
-  longestWait = 0;
+  longWait = 0;
   longestIdle = 0;
   meanWait = 0;
   medianWait = 0;
   meanIdle = 0;
   numberPeople = 0;
   timer = 0;
-  totalPeople = 0;
-  overTen = 0;
-  overFive = 0;
+  total = 0;
+  tenPlus = 0;
+  fivePlus = 0;
   calculate();
 }
 
-
-int Simulation::windowsOpen()
+int Simulation::checkWindows()
 {
-  for(int i = 0; i < windowCount; i++)
+  for(int i = 0; i < windowAmount; i++)
   {
     if(windows[i] == false)
     {
@@ -64,20 +62,65 @@ int Simulation::windowsOpen()
 
 double Simulation::findMedian()
 {
-  sort(waitTimes, waitTimes + totalPeople-1);
-  if((totalPeople % 2) == 1)
+  sort(waitArray, waitArray + total - 1);
+  if((total % 2) == 1)
   {
-    return waitTimes[(totalPeople/2)];
+    return waitArray[(total/2)];
   }
   else
   {
-    return ((waitTimes[totalPeople/2]+waitTimes[(totalPeople/2)-1]));
+    return ((waitArray[total/2]+waitArray[(total/2)-1]));
   }
 }
 
+double Simulation::overTen()
+{
+  for(int i = 0; i < total; i++)
+  {
+    if(waitArray[i] > 10)
+    {
+      tenPlus++;
+    }
+  }
+}
+
+double Simulation::overFive()
+{
+  for(int j = 0; j < windowAmount; j++)
+  {
+    if(idleArray[j] > 5)
+    {
+      fivePlus++;
+    }
+  }
+}
+
+double Simulation::longestIdleWait()
+{
+  for(int j = 0; j < windowAmount; j++)
+  {
+    if(longestIdle < idleArray[j])
+    {
+      longestIdle = idleArray[j];
+    }
+  }
+}
+
+double Simulation::longestWait()
+{
+  for(int i = 0; i < total; i++)
+  {
+    if(longWait < waitArray[i])
+    {
+      longWait = waitArray[i];
+    }
+  }
+}
+
+
 bool Simulation::windowsAreEmpty()
 {
-  for(int i = 0; i < windowCount; i++)
+  for(int i = 0; i < windowAmount; i++)
   {
     if(windows[i] == true)
     {
@@ -91,10 +134,10 @@ void Simulation::calculate()
 {
   people.open(fileName); //opens the file
   people >> currentLine;
-  windowCount = stoi(currentLine);
-  personAtWindow = new Student[windowCount];
-  windows = new bool[windowCount];
-  idleTimes = new int[windowCount];
+  windowAmount = stoi(currentLine);
+  personAtWindow = new Student[windowAmount];
+  windows = new bool[windowAmount];
+  idleArray = new int[windowAmount];
   int peopleArriving;
 
   while(!people.eof())
@@ -108,16 +151,16 @@ void Simulation::calculate()
     {
       people >> currentLine;
       Student p(stoi(currentLine), arrv);
-      totalPeople++;
-      entered.enqueue(p);
+      total++;
+      begin.enqueue(p);
     }
   }
-  waitTimes = new int[totalPeople];
+  waitArray = new int[total];
 }
 
 void Simulation::clearWindows()
 {
-  for(int i = 0; i < windowCount; i++)
+  for(int i = 0; i < windowAmount; i++)
   {
     if(windows[i] == true)
     {
@@ -127,11 +170,11 @@ void Simulation::clearWindows()
         Student temp = personAtWindow[i];
         if(temp.timeWaited == 0)
         {
-          waitTimes[numberPeople] = 0;
+          waitArray[numberPeople] = 0;
         }
         else
         {
-          waitTimes[numberPeople] =  temp.timeWaited - 1;
+          waitArray[numberPeople] =  temp.timeWaited - 1;
         }
         numberPeople++; //increments the number of people helped
       }
@@ -141,45 +184,46 @@ void Simulation::clearWindows()
 
 void Simulation::addToLine()
 {
-  Student p = entered.vFront();
+  Student p = begin.vFront();
   while(p.arrivalTime == timer)
   {
-    regLine.enqueue(p);
-    entered.dequeue();
-    p = entered.vFront();
+    end.enqueue(p);
+    begin.dequeue();
+    p = begin.vFront();
   }
 }
 
+
 void Simulation::moveLine()
 {
-    while(!entered.isEmpty()|| !regLine.isEmpty() || !windowsAreEmpty())
+    while(!begin.isEmpty()|| !end.isEmpty() || !windowsAreEmpty())
     {
-      if(!entered.isEmpty())
+      if(!begin.isEmpty())
       {
         addToLine();
       }
 
       clearWindows();
 
-      while(windowsOpen() != -1 && !regLine.isEmpty())
+      while(checkWindows() != -1 && !end.isEmpty())
       {
-        Student temp = regLine.vFront();
-        int openWindow = windowsOpen();
+        Student temp = end.vFront();
+        int openWindow = checkWindows();
         windows[openWindow] = true;
         personAtWindow[openWindow] = temp;
-        regLine.dequeue();
+        end.dequeue();
       }
 
-      for(int i = 0; i < windowCount; i++)
+      for(int i = 0; i < windowAmount; i++)
       {
         personAtWindow[i].timeSpent++;
       }
 
       GenQueue<Student> copy;
-      while(!regLine.isEmpty())
+      while(!end.isEmpty())
       {
-        Student temp1 = regLine.vFront();
-        regLine.dequeue();
+        Student temp1 = end.vFront();
+        end.dequeue();
         copy.enqueue(temp1);
       }
 
@@ -188,49 +232,43 @@ void Simulation::moveLine()
         Student temp = copy.vFront();
         copy.dequeue();
         temp.timeWaited++;
-        regLine.enqueue(temp);
+        end.enqueue(temp);
       }
 
-      for(int i = 0; i < windowCount; i++)
+      for(int i = 0; i < windowAmount; i++)
       {
         if(windows[i] == false)
         {
-          idleTimes[i]++;
+          idleArray[i]++;
         }
       }
 
       if(timer == 5)
       {
-        Student test = regLine.vFront();
+        Student test = end.vFront();
       }
       timer++;
     }
-    for(int i = 0; i < totalPeople; i++)
+
+    longestWait();
+
+    overTen();
+
+    longestIdleWait();
+
+    overFive();
+
+    for(int j = 0; j < windowAmount; j++)
     {
-      meanWait += waitTimes[i];
-      if(longestWait < waitTimes[i])
-      {
-        longestWait = waitTimes[i];
-      }
-      if(waitTimes[i] > 10)
-      {
-        overTen++;
-      }
+      meanIdle = meanIdle + idleArray[j];
     }
 
-    for(int j = 0; j < windowCount; j++)
+    for(int i = 0; i < total; i++)
     {
-      meanIdle += idleTimes[j];
-      if(longestIdle < idleTimes[j])
-      {
-        longestIdle = idleTimes[j];
-      }
-      if(idleTimes[j] > 5)
-      {
-        overFive++;
-      }
+      meanWait = meanWait + waitArray[i];
     }
-    meanWait = meanWait/totalPeople;
+
+    meanWait = meanWait/total;
     medianWait = findMedian();
-    meanIdle = meanIdle/windowCount;
+    meanIdle = meanIdle/windowAmount;
 }
