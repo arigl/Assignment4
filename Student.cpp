@@ -16,10 +16,10 @@ using namespace std;
 
 Student::Student()
 {
-  timeNeeded = 0;
-  timeSpent = 0;
-  timeWaited = 0;
-  arrivalTime = 0;
+  timeNeeded = 0; //time the student needs 
+  timeSpent = 0; //time the student has spent there 
+  timeWaited = 0; //time the student has waited
+  arrivalTime = 0; //the time the student got there 
 }
 
 Student::Student(int needs, int arrived)
